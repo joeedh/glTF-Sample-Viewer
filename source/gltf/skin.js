@@ -1,6 +1,6 @@
 import { jsToGlSlice } from './utils.js';
 import { GltfObject } from './gltf_object.js';
-import { mat4 } from 'gl-matrix';
+import { mat4 } from '../libs/gl-matrix/gl-matrix.js';
 import { GL  } from '../Renderer/webgl.js';
 import { gltfImage } from './image.js';
 import { ImageMimeType } from './image_mime_type.js';

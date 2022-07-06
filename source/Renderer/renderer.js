@@ -1,9 +1,10 @@
-import { mat4, mat3, vec3, quat } from 'gl-matrix';
+import { mat4, mat3, vec3, quat } from '../libs/gl-matrix/gl-matrix.js';
 import { ShaderCache } from './shader_cache.js';
 import { GltfState } from '../GltfState/gltf_state.js';
 import { gltfWebGl, GL } from './webgl.js';
 import { EnvironmentRenderer } from './environment_renderer.js'
 
+/*
 import pbrShader from './shaders/pbr.frag';
 import brdfShader from './shaders/brdf.glsl';
 import iridescenceShader from './shaders/iridescence.glsl';
@@ -17,6 +18,20 @@ import shaderFunctions from './shaders/functions.glsl';
 import animationShader from './shaders/animation.glsl';
 import cubemapVertShader from './shaders/cubemap.vert';
 import cubemapFragShader from './shaders/cubemap.frag';
+*/
+
+import pbrShader from './shaders/pbr.frag.js';
+import brdfShader from './shaders/brdf.glsl.js';
+import materialInfoShader from './shaders/material_info.glsl.js';
+import iblShader from './shaders/ibl.glsl.js';
+import punctualShader from './shaders/punctual.glsl.js';
+import primitiveShader from './shaders/primitive.vert.js';
+import texturesShader from './shaders/textures.glsl.js';
+import tonemappingShader from './shaders/tonemapping.glsl.js';
+import shaderFunctions from './shaders/functions.glsl.js';
+import animationShader from './shaders/animation.glsl.js';
+import cubemapVertShader from './shaders/cubemap.vert.js';
+import cubemapFragShader from './shaders/cubemap.frag.js';
 import { gltfLight } from '../gltf/light.js';
 
 class gltfRenderer

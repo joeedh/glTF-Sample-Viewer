@@ -1,4 +1,4 @@
-import { vec3, mat4, quat } from 'gl-matrix';
+import { vec3, mat4, quat } from '../libs/gl-matrix/gl-matrix.js';
 import { gltfCamera } from './camera.js';
 import { clamp } from './utils.js';
 import { getSceneExtents } from './gltf_utils.js';

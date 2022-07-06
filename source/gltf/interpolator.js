@@ -1,7 +1,7 @@
 import { InterpolationModes } from './animation_sampler.js';
 import { InterpolationPath } from './channel.js';
 import { clamp, jsToGlSlice } from './utils.js';
-import { quat, glMatrix } from 'gl-matrix';
+import { quat, glMatrix } from '../libs/gl-matrix/gl-matrix.js';
 
 class gltfInterpolator
 {

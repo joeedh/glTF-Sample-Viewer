@@ -1,4 +1,4 @@
-import { glMatrix } from 'gl-matrix';
+import { glMatrix } from '../libs/gl-matrix/gl-matrix.js';
 
 function jsToGl(array) {
     let tensor = new glMatrix.ARRAY_TYPE(array.length);
