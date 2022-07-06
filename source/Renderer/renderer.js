@@ -6,6 +6,7 @@ import { EnvironmentRenderer } from './environment_renderer.js'
 
 import pbrShader from './shaders/pbr.frag';
 import brdfShader from './shaders/brdf.glsl';
+import iridescenceShader from './shaders/iridescence.glsl';
 import materialInfoShader from './shaders/material_info.glsl';
 import iblShader from './shaders/ibl.glsl';
 import punctualShader from './shaders/punctual.glsl';
@@ -43,6 +44,7 @@ class gltfRenderer
         shaderSources.set("pbr.frag", pbrShader);
         shaderSources.set("material_info.glsl", materialInfoShader);
         shaderSources.set("brdf.glsl", brdfShader);
+        shaderSources.set("iridescence.glsl", iridescenceShader);
         shaderSources.set("ibl.glsl", iblShader);
         shaderSources.set("punctual.glsl", punctualShader);
         shaderSources.set("tonemapping.glsl", tonemappingShader);
@@ -281,8 +283,8 @@ class gltfRenderer
         if (this.visibleLights.length === 0 && !state.renderingParameters.useIBL &&
             state.renderingParameters.useDirectionalLightsWithDisabledIBL)
         {
-            this.visibleLights.push(this.lightKey);
-            this.visibleLights.push(this.lightFill);
+            this.visibleLights.push([null, this.lightKey]);
+            this.visibleLights.push([null, this.lightFill]);
         }
 
         mat4.multiply(this.viewProjectionMatrix, this.projMatrix, this.viewMatrix);
@@ -583,21 +585,20 @@ class gltfRenderer
         }
     }
 
-    // returns all lights that are relevant for rendering or the default light if there are none
+    /// Compute a list of lights instantiated by one or more nodes as a list of node-light tuples.
     getVisibleLights(gltf, scene)
     {
-        let lights = [];
-        for (let light of gltf.lights)
-        {
-            if (light.node !== undefined)
-            {
-                if (scene.includesNode(gltf, light.node))
-                {
-                    lights.push(light);
-                }
+        const nodeLights = [];
+        for (const nodeIndex of scene.nodes) {
+            const node = gltf.nodes[nodeIndex];
+            const lightIndex = node.extensions?.KHR_lights_punctual?.light;
+            if (lightIndex === undefined) {
+                continue;
             }
+            const light = gltf.lights[lightIndex];
+            nodeLights.push([node, light]);
         }
-        return lights;
+        return nodeLights;
     }
 
     updateSkin(state, node)
@@ -647,7 +648,7 @@ class gltfRenderer
         if (state.renderingParameters.usePunctual)
         {
             fragDefines.push("USE_PUNCTUAL 1");
-            fragDefines.push("LIGHT_COUNT " + this.visibleLights.length);
+            fragDefines.push(`LIGHT_COUNT ${this.visibleLights.length}`);
         }
 
         if (state.renderingParameters.useIBL && state.environment)
@@ -706,6 +707,10 @@ class gltfRenderer
             {debugOutput: GltfState.DebugOutput.transmission.TRANSMISSION_VOLUME, shaderDefine: "DEBUG_TRANSMISSION_VOLUME"},
             {debugOutput: GltfState.DebugOutput.transmission.TRANSMISSION_FACTOR, shaderDefine: "DEBUG_TRANSMISSION_FACTOR"},
             {debugOutput: GltfState.DebugOutput.transmission.VOLUME_THICKNESS, shaderDefine: "DEBUG_VOLUME_THICKNESS"},
+
+            {debugOutput: GltfState.DebugOutput.iridescence.IRIDESCENCE, shaderDefine: "DEBUG_IRIDESCENCE"},
+            {debugOutput: GltfState.DebugOutput.iridescence.IRIDESCENCE_FACTOR, shaderDefine: "DEBUG_IRIDESCENCE_FACTOR"},
+            {debugOutput: GltfState.DebugOutput.iridescence.IRIDESCENCE_THICKNESS, shaderDefine: "DEBUG_IRIDESCENCE_THICKNESS"},
         ];
 
         let mappingCount = 0;
@@ -726,15 +731,14 @@ class gltfRenderer
 
     applyLights(gltf)
     {
-        let uniformLights = [];
-        for (let light of this.visibleLights)
+        const uniforms = [];
+        for (const [node, light] of this.visibleLights)
         {
-            uniformLights.push(light.toUniform(gltf));
+            uniforms.push(light.toUniform(node));
         }
-
-        if (uniformLights.length > 0)
+        if (uniforms.length > 0)
         {
-            this.shader.updateUniform("u_Lights", uniformLights);
+            this.shader.updateUniform("u_Lights", uniforms);
         }
     }
 
@@ -756,6 +760,8 @@ class gltfRenderer
         let rotMatrix3 = mat3.create();
         mat3.fromMat4(rotMatrix3, rotMatrix4);
         this.shader.updateUniform("u_EnvRotation", rotMatrix3);
+
+        this.shader.updateUniform("u_EnvIntensity", state.renderingParameters.iblIntensity);
 
         return texSlotOffset;
     }

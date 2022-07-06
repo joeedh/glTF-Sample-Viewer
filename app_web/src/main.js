@@ -187,10 +187,10 @@ async function main()
     });
     listenForRedraw(uiModel.skinningEnabled);
 
-    uiModel.exposurecompensation.subscribe( exposurecompensation => {
-        state.renderingParameters.exposure = Math.pow(2, exposurecompensation);
+    uiModel.exposure.subscribe( exposure => {
+        state.renderingParameters.exposure = (1.0 / Math.pow(2.0, exposure));
     });
-    listenForRedraw(uiModel.exposurecompensation);
+    listenForRedraw(uiModel.exposure);
 
     uiModel.morphingEnabled.subscribe( morphingEnabled => {
         state.renderingParameters.morphing = morphingEnabled;
@@ -212,8 +212,14 @@ async function main()
     uiModel.iorEnabled.subscribe( iorEnabled => {
         state.renderingParameters.enabledExtensions.KHR_materials_ior = iorEnabled;
     });
+    uiModel.iridescenceEnabled.subscribe( iridescenceEnabled => {
+        state.renderingParameters.enabledExtensions.KHR_materials_iridescence = iridescenceEnabled;
+    });
     uiModel.specularEnabled.subscribe( specularEnabled => {
         state.renderingParameters.enabledExtensions.KHR_materials_specular = specularEnabled;
+    });
+    uiModel.emissiveStrengthEnabled.subscribe( enabled => {
+        state.renderingParameters.enabledExtensions.KHR_materials_emissive_strength = enabled;
     });
     listenForRedraw(uiModel.clearcoatEnabled);
     listenForRedraw(uiModel.sheenEnabled);
@@ -221,11 +227,18 @@ async function main()
     listenForRedraw(uiModel.volumeEnabled);
     listenForRedraw(uiModel.iorEnabled);
     listenForRedraw(uiModel.specularEnabled);
+    listenForRedraw(uiModel.iridescenceEnabled);
+    listenForRedraw(uiModel.emissiveStrengthEnabled);
 
     uiModel.iblEnabled.subscribe( iblEnabled => {
         state.renderingParameters.useIBL = iblEnabled;
     });
     listenForRedraw(uiModel.iblEnabled);
+
+    uiModel.iblIntensity.subscribe( iblIntensity => {
+        state.renderingParameters.iblIntensity = Math.pow(10, iblIntensity);
+    });
+    listenForRedraw(uiModel.iblIntensity);
 
     uiModel.renderEnvEnabled.subscribe( renderEnvEnabled => {
         state.renderingParameters.renderEnvironmentMap = renderEnvEnabled;
