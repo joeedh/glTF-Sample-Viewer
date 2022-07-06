@@ -1,4 +1,4 @@
-import { mat4, vec3, quat } from 'gl-matrix';
+import { mat4, vec3, quat } from '../libs/gl-matrix/gl-matrix.js';
 import { jsToGl, UniformStruct } from './utils.js';
 import { fromKeys } from './utils.js';
 import { GltfObject } from './gltf_object.js';

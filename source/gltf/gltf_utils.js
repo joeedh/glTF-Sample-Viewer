@@ -1,4 +1,4 @@
-import { vec3 } from 'gl-matrix';
+import { vec3 } from '../libs/gl-matrix/gl-matrix.js';
 import { jsToGl } from './utils.js';
 
 function getSceneExtents(gltf, sceneIndex, outMin, outMax)

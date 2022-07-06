@@ -1,10 +1,10 @@
 import { ShaderCache } from './Renderer/shader_cache.js';
 
 
-import iblFiltering from './shaders/ibl_filtering.frag';
-import panoramaToCubeMap from './shaders/panorama_to_cubemap.frag';
-import debugOutput from './shaders/debug.frag';
-import fullscreenShader from './shaders/fullscreen.vert';
+import iblFiltering from './shaders/ibl_filtering.frag.js';
+import panoramaToCubeMap from './shaders/panorama_to_cubemap.frag.js';
+import debugOutput from './shaders/debug.frag.js';
+import fullscreenShader from './shaders/fullscreen.vert.js';
 
 
 // How to use:
